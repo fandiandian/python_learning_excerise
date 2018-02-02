@@ -74,7 +74,47 @@ elif n == 1:
     hdm_print(n,hdm)
 else:
     hdm_print(n,hdm_metrix(n,hdm))
+
     
+''' 这是书上的答案'''
+'''
+对比了一下，书上的要简洁的多，一次性构建好 n x n 阶的哈达玛矩阵，通过循环来改变其中的元素值
+这样效率要快的多，可读性也要更好
+'''
+#-----------------------------------------------------------------------
+# hadamard.py
+#-----------------------------------------------------------------------
+
+import stdio
+import stdarray
+import sys
+
+# Accept integer command-line argument n. Write to standard output
+# the Hadamard matrix of order n. Assume that n is a power of 2.
+
+n = int(sys.argv[1])
+
+# Create the matrix.
+H = stdarray.create2D(n, n, True)
+
+# Initialize Hadamard matrix of order n.
+i1 = 1
+while i1 < n:
+    for i2 in range(i1):
+        for i3 in range(i1):
+            H[i2+i1][i3]    = H[i2][i3]
+            H[i2][i3+i1]    = H[i2][i3]
+            H[i2+i1][i3+i1] = not H[i2][i3]
+    i1 += i1
+
+# Write the matrix.
+for i in range(n):
+    for j in range(n):
+        if H[i][j]:
+            stdio.write('T ')
+        else:
+            stdio.write('F ')
+    stdio.writeln()
 
 
 
