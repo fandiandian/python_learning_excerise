@@ -137,13 +137,13 @@ stdio.writeln()
 
 
 # 用于产生乱序序列
-import random
+import random,math
 # 用于测试运行的时间，主要用到其中的 datetime.datetime.now() 函数
 # 通过前后时间相减，在调用 .seconds() 方法即可得到运行的时间
 import datetime
 
 # 创建一个乱序的数组
-lst = [x for x in range(50000, 0, -1)]
+lst = [x for x in range(47, 0, -1)]
 random.shuffle(lst)
 lst1 = lst[:]
 lst2 = lst[:]
@@ -219,13 +219,13 @@ def insertion_sort(lst,nn0):
                                              
     return nn0,lst
     
-a = datetime.datetime.now()
-print(a)   
-print(insertion_sort(lst,nn0)[0])
-b = datetime.datetime.now()
-print(b)
-print((b-a).seconds)
-print('#############################################')
+# a = datetime.datetime.now()
+# print(a)   
+# print(insertion_sort(lst,nn0)[0])
+# b = datetime.datetime.now()
+# print(b)
+# print((b-a).seconds)
+# print('#############################################')
 
 #   ''' ### 上面是我自己写的，将无序序列的最后一个元素与前面的有序序列（从前向后）比较后插入正确位置 ###''' 
 #   ''' ### 下面是网上的思路，将无序序列的第一个元素与前面的有序序列（从后向前）比较后插入正确位置 ###'''
@@ -246,13 +246,13 @@ def insertion_sort_1(lst,nn1):
     return nn1,lst
 
 
-a1 = datetime.datetime.now() 
-print(a1)
-print(insertion_sort_1(lst1,nn1)[0])
-b1 = datetime.datetime.now()
-print(b1)
-print((b1-a1).seconds)
-print('#############################################')
+# a1 = datetime.datetime.now() 
+# print(a1)
+# print(insertion_sort_1(lst1,nn1)[0])
+# b1 = datetime.datetime.now()
+# print(b1)
+# print((b1-a1).seconds)
+# print('#############################################')
 nn2 = 0
 def insertion_sort_2(lst,nn2):
     n = len(lst)
@@ -275,13 +275,13 @@ def insertion_sort_2(lst,nn2):
             lst[index] = temp
     return nn2,lst
 
-a2 = datetime.datetime.now()
-print(a2)
-print(insertion_sort_2(lst2,nn2)[0])
-b2 = datetime.datetime.now()
-print(b2)   
-print((b2-a2).seconds)
-print('#############################################')
+# a2 = datetime.datetime.now()
+# print(a2)
+# print(insertion_sort_2(lst2,nn2)[0])
+# b2 = datetime.datetime.now()
+# print(b2)   
+# print((b2-a2).seconds)
+# print('#############################################')
 '''
 经过运行时间测试，第一种的运行速度是最快的，第三种慢上几秒，第二种要比第一种慢上一倍左右
 总结一下：
@@ -302,12 +302,14 @@ print('#############################################')
 # 希尔排序：通过一个逐渐缩小的步长来把间隔值是步长的元素的两个值进行比较和位置交换，直到步长变成 1 ，在进行冒泡排序
 # 在步长变小的过程中，通过较少的比较，可以得到一个相对有序的序列，当步长为 1 时，计算量也不会很大
 # 相应的，步长的选取对希尔排序的运行速度有一定的影响
+# 要确保最后的步长为 1 ，无法得到想要的结果
 
-nn3 = 0
-def shell_sort(lst,nn3):
+# for 循环版
+def shell_sort(lst):
     n = len(lst)
-    # 确定步长   
-    for m in range(4,-1,-1):
+    # 确定步长
+    mm = round(math.log(n,2))-1 
+    for m in range(mm,-1,-1):
         span = 2**m - 1
         # 根据步长，将数据分组，确定循环次数
         for i in range(span):
@@ -322,22 +324,156 @@ def shell_sort(lst,nn3):
                     for k in range(j - span, -1, -span):
                         if lst[k] > temp:
                             lst[k + span] = lst[k]
-                            index = k
-                            nn3 += 1
+                            index = k                          
                         else:
                             break
                     lst[index] = temp
             
-    return nn3,lst
-          
+    return lst
+     
 a3 = datetime.datetime.now() 
 print(a3)
-print(shell_sort(lst3,nn3)[0])
+print(shell_sort(lst3))
 b3 = datetime.datetime.now()
 print(b3)
 print((b3-a3).seconds)
 
-            
-            
+#  while 循环版
+nn4 = 0            
+def shell_sort_1(list,nn4):
+    n = len(list)
+    # 初始步长
+    ii = round(math.log(n,2)) - 1 
+    gap = 2**ii - 1
+    while gap > 0:
+        for i in range(gap, n):
+            # 每个步长进行插入排序
+            temp = list[i]
+            j = i
+            # 插入排序
+            while j >= gap and list[j - gap] > temp:
+                list[j] = list[j - gap]
+                j -= gap
+                nn4 += 1
+            list[j] = temp
+        # 得到新的步长
+        ii -= 1 
+        gap = 2**ii - 1
+    return nn4,list           
         
+# a4 = datetime.datetime.now() 
+# print(a4)
+# print(shell_sort_1(lst1,nn4)[0])
+# print(shell_sort_1(lst1,nn4)[1])
+# b4 = datetime.datetime.now()
+# print(b4)
+# print((b4-a4).seconds)
 
+
+''' #### 归并排序（Merge sort） #### '''
+
+# 归并排序
+# 将一个无序的序列进行多次分段，小的分段进行排序后向上合并有序的序列，多次合并操作完成整个序列的排序
+# 主要应用场景：将两个已排序的序列合并成一个有序的序列，此排序方法依赖归并操作
+# 构建一个长度等于两个序列的的数组，依次从头开始比较，将最小（大）的提取出来，放入到已构建的数组中，被提取的数组下标加 1 
+
+# 连个有序序列归并操作
+# merge_lst_a = [i for i in range(1,20,2)]
+# merge_lst_b = [i for i in range(0,20,2)]
+# aa = len(merge_lst_a)
+# bb = len(merge_lst_b)
+# cc = aa + bb
+# merge_lst_c = [0 for i in range(cc)]
+# print(merge_lst_a)
+# print(merge_lst_b)
+
+# j = 0
+# k = 0
+# for i in range(cc):    
+    # if j >= aa:
+        # merge_lst_c[i] = merge_lst_b[k]
+        # k += 1
+    # elif k >= bb:
+        # merge_lst_c[i] = merge_lst_a[j]
+        # j += 1
+    # elif merge_lst_a[j] <= merge_lst_b[k]:
+        # merge_lst_c[i] = merge_lst_a[j]
+        # j += 1
+    # elif merge_lst_a[j] > merge_lst_b[k]:
+        # merge_lst_c[i] = merge_lst_b[k]
+        # k += 1
+           
+# print(merge_lst_c)
+######################################################
+# 合并
+def merge1(l_lst,r_lst):
+    result = []
+    if n == 1:
+        return lst
+    l,r = 0,0
+    while l < len(l_lst) and r < len(r_lst):
+        if l_lst[l] <= r_lst[r]:
+            result.append(l_lst[l])
+            l += 1
+        else:
+            result.append(r_lst[r])
+            r += 1
+    result += l_lst[l:]
+    result += r_lst[r:]
+    
+    return result
+    
+# 分组
+def merge_sort1(lst):
+    n = len(lst)
+    steps = 2
+    while steps < n:
+        for i in range(0,n,steps):
+            if i + steps <= n:
+                lst[i:i + steps] =  merge(lst[i:i + steps])
+            else:
+                lst[i:] = merge(lst[i:])
+        steps *= 2
+    return lst
+    
+# print(lst)        
+# print(merge_sort(lst))
+ 
+########################################
+'''归并排序中用到的递归，需要好好的学习一下，目前不是很清楚'''
+########################################
+ 
+def merge_sort(list):
+    # 认为长度不大于1的数列是有序的
+    if len(list) <= 1:
+        return list
+    # 二分列表
+    middle = int(len(list) // 2)
+    left = merge_sort(list[:middle])   # 递归#######################
+    right = merge_sort(list[middle:])  # 递归#######################
+    # 最后一次合并
+    return merge(left, right)
+# 合并
+def merge(left, right):
+    l,r=0,0
+    result=[]
+    while l < len(left) and r < len(right):
+        if left[l] < right[r]:
+            result.append(left[l])
+            l+=1
+        else:
+            result.append(right[r])
+            r +=1
+    result += left[l:]
+    result += right[r:]                
+    return result
+  
+
+a5 = datetime.datetime.now()
+print(a5)  
+print(merge_sort(lst2))
+b5 = datetime.datetime.now() 
+print(b5) 
+print((b5-a5).seconds)
+
+## 运行结果表明：在此乱序序列的排序中，归并排序 速度快于 希尔排序
