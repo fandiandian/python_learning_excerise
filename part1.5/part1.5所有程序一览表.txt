@@ -1,0 +1,9 @@
+程序名称                        功能描述
+1.5.1（randomseq.py)           生成一个随机序列
+1.5.2（twentyquestions.py)     交互式用户输入
+1.5.3（averrage.py)            计算输入流中数值的平均值
+1.5.4（rangefilter.py)         一个简单的过滤器
+1.5.5（plotfilter.py)          标准输入到绘图过滤器
+1.5.6（functiongraph.py)       函数图形
+1.5.7（bouncingball.py)        弹跳的小球
+1.5.8（playthattune.py)        数字信号处理
